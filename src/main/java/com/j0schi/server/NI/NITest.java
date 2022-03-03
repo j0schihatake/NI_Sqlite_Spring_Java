@@ -1,12 +1,13 @@
-package NI;
+package com.j0schi.server.NI;
 
-import NI.model.NILayer;
-import NI.model.NINetwork;
-import NI.model.NINeuron;
-import NI.model.NISample;
-import NI.service.NIService;
-import NI.util.SqLiteUtil;
+import com.j0schi.server.NI.model.NILayer;
+import com.j0schi.server.NI.model.NINetwork;
+import com.j0schi.server.NI.model.NINeuron;
+import com.j0schi.server.NI.model.NISample;
+import com.j0schi.server.NI.service.NIService;
+import com.j0schi.server.NI.util.SqLiteUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
  * com.j0schi.server.NI пример из книги:
  */
 @AllArgsConstructor
+@Component
 public class NITest {
 
     public void test(NIService niService) throws SQLException, ClassNotFoundException {
@@ -51,10 +53,10 @@ public class NITest {
         NINeuron enemy = new NINeuron(3);
         enemy.setDescription("Нейрон отражающий количество противников.");
 
-        wonderInputLayer.getLayer().add(health);
-        wonderInputLayer.getLayer().add(knifle);
-        wonderInputLayer.getLayer().add(gun);
-        wonderInputLayer.getLayer().add(enemy);
+        wonderInputLayer.getNeurons().add(health);
+        wonderInputLayer.getNeurons().add(knifle);
+        wonderInputLayer.getNeurons().add(gun);
+        wonderInputLayer.getNeurons().add(enemy);
 
         //"Attack", "Run", "Wander", "Hide"
 
@@ -73,10 +75,10 @@ public class NITest {
         NINeuron hide = new NINeuron(0);
         hide.setDescription("Действие : спрятаться");
 
-        wonderOuputLayer.getLayer().add(atack);
-        wonderOuputLayer.getLayer().add(run);
-        wonderOuputLayer.getLayer().add(wander);
-        wonderOuputLayer.getLayer().add(hide);
+        wonderOuputLayer.getNeurons().add(atack);
+        wonderOuputLayer.getNeurons().add(run);
+        wonderOuputLayer.getNeurons().add(wander);
+        wonderOuputLayer.getNeurons().add(hide);
 
         wonderSample.inputLayer = wonderInputLayer;
         wonderSample.outputLayer = wonderOuputLayer;
@@ -105,8 +107,6 @@ public class NITest {
 
         NILayer wonderInputLayer = new NILayer();
 
-        ArrayList<NINeuron> input = new ArrayList<NINeuron>();
-
         NINeuron health = new NINeuron(2);
         health.setDescription("Нейрон отражающий состояние здоровья.");
 
@@ -119,10 +119,10 @@ public class NITest {
         NINeuron enemy = new NINeuron(0);
         enemy.setDescription("Нейрон отражающий количество противников.");
 
-        wonderInputLayer.getLayer().add(health);
-        wonderInputLayer.getLayer().add(knifle);
-        wonderInputLayer.getLayer().add(gun);
-        wonderInputLayer.getLayer().add(enemy);
+        wonderInputLayer.getNeurons().add(health);
+        wonderInputLayer.getNeurons().add(knifle);
+        wonderInputLayer.getNeurons().add(gun);
+        wonderInputLayer.getNeurons().add(enemy);
 
         //"Attack", "Run", "Wander", "Hide"
 
@@ -141,14 +141,16 @@ public class NITest {
         NINeuron hide = new NINeuron(0);
         hide.setDescription("Действие : спрятаться");
 
-        wonderOuputLayer.getLayer().add(atack);
-        wonderOuputLayer.getLayer().add(run);
-        wonderOuputLayer.getLayer().add(wander);
-        wonderOuputLayer.getLayer().add(hide);
+        wonderOuputLayer.getNeurons().add(atack);
+        wonderOuputLayer.getNeurons().add(run);
+        wonderOuputLayer.getNeurons().add(wander);
+        wonderOuputLayer.getNeurons().add(hide);
 
         wonderSample.setInputLayer(wonderInputLayer);
         wonderSample.setOutputLayer(wonderOuputLayer);
 
+        wonderSample.getLayer().add(wonderInputLayer);
+        wonderSample.getLayer().add(wonderOuputLayer);
 
         //----------------------------------------- Wonder 2:
 
@@ -170,10 +172,10 @@ public class NITest {
         enemy = new NINeuron(1);
         enemy.setDescription("Нейрон отражающий количество противников.");
 
-        wonder2InputLayer.getLayer().add(health);
-        wonder2InputLayer.getLayer().add(knifle);
-        wonder2InputLayer.getLayer().add(gun);
-        wonder2InputLayer.getLayer().add(enemy);
+        wonder2InputLayer.getNeurons().add(health);
+        wonder2InputLayer.getNeurons().add(knifle);
+        wonder2InputLayer.getNeurons().add(gun);
+        wonder2InputLayer.getNeurons().add(enemy);
 
         //"Attack", "Run", "Wander", "Hide"
 
@@ -192,13 +194,16 @@ public class NITest {
         hide = new NINeuron(0);
         hide.setDescription("Действие : спрятаться");
 
-        wonder2OuputLayer.getLayer().add(atack);
-        wonder2OuputLayer.getLayer().add(run);
-        wonder2OuputLayer.getLayer().add(wander);
-        wonder2OuputLayer.getLayer().add(hide);
+        wonder2OuputLayer.getNeurons().add(atack);
+        wonder2OuputLayer.getNeurons().add(run);
+        wonder2OuputLayer.getNeurons().add(wander);
+        wonder2OuputLayer.getNeurons().add(hide);
 
         wonder2Sample.setInputLayer(wonder2InputLayer);
         wonder2Sample.setOutputLayer(wonder2OuputLayer);
+
+        wonder2Sample.getLayer().add(wonder2InputLayer);
+        wonder2Sample.getLayer().add(wonder2OuputLayer);
 
         //----------------------------------------- Atack:
 
@@ -220,10 +225,10 @@ public class NITest {
         enemy = new NINeuron(1);
         enemy.setDescription("Нейрон отражающий количество противников.");
 
-        atackInputLayer.getLayer().add(health);
-        atackInputLayer.getLayer().add(knifle);
-        atackInputLayer.getLayer().add(gun);
-        atackInputLayer.getLayer().add(enemy);
+        atackInputLayer.getNeurons().add(health);
+        atackInputLayer.getNeurons().add(knifle);
+        atackInputLayer.getNeurons().add(gun);
+        atackInputLayer.getNeurons().add(enemy);
 
         //"Attack", "Run", "Wander", "Hide"
 
@@ -242,13 +247,16 @@ public class NITest {
         hide = new NINeuron(0);
         hide.setDescription("Действие : спрятаться");
 
-        atackOuputLayer.getLayer().add(atack);
-        atackOuputLayer.getLayer().add(run);
-        atackOuputLayer.getLayer().add(wander);
-        atackOuputLayer.getLayer().add(hide);
+        atackOuputLayer.getNeurons().add(atack);
+        atackOuputLayer.getNeurons().add(run);
+        atackOuputLayer.getNeurons().add(wander);
+        atackOuputLayer.getNeurons().add(hide);
 
         atackSample.setInputLayer(atackInputLayer);
         atackSample.setOutputLayer(atackOuputLayer);
+
+        atackSample.getLayer().add(atackInputLayer);
+        atackSample.getLayer().add(atackOuputLayer);
 
         //----------------------------------------- Atack 2:
 
@@ -270,10 +278,10 @@ public class NITest {
         enemy = new NINeuron(2);
         enemy.setDescription("Нейрон отражающий количество противников.");
 
-        atack2InputLayer.getLayer().add(health);
-        atack2InputLayer.getLayer().add(knifle);
-        atack2InputLayer.getLayer().add(gun);
-        atack2InputLayer.getLayer().add(enemy);
+        atack2InputLayer.getNeurons().add(health);
+        atack2InputLayer.getNeurons().add(knifle);
+        atack2InputLayer.getNeurons().add(gun);
+        atack2InputLayer.getNeurons().add(enemy);
 
         // "Attack", "Run", "Wander", "Hide"
 
@@ -293,13 +301,16 @@ public class NITest {
         hide = new NINeuron(0);
         hide.setDescription("Действие : спрятаться");
 
-        atack2OuputLayer.getLayer().add(atack);
-        atack2OuputLayer.getLayer().add(run);
-        atack2OuputLayer.getLayer().add(wander);
-        atack2OuputLayer.getLayer().add(hide);
+        atack2OuputLayer.getNeurons().add(atack);
+        atack2OuputLayer.getNeurons().add(run);
+        atack2OuputLayer.getNeurons().add(wander);
+        atack2OuputLayer.getNeurons().add(hide);
 
         atack2Sample.setInputLayer(atack2InputLayer);
         atack2Sample.setOutputLayer(atack2OuputLayer);
+
+        atack2Sample.getLayer().add(atack2InputLayer);
+        atack2Sample.getLayer().add(atack2OuputLayer);
 
         bookNetwork.getSamples().add(wonderSample);
         bookNetwork.getSamples().add(wonder2Sample);

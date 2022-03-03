@@ -1,14 +1,13 @@
-package NI.repository;
+package com.j0schi.server.NI.repository;
 
-import NI.mapper.NILayerMapper;
-import NI.mapper.NINeuronMapper;
-import NI.mapper.NISampleMapper;
-import NI.model.NILayer;
-import NI.model.NINetwork;
-import NI.mapper.NINetworkMapper;
-import NI.model.NINeuron;
-import NI.model.NISample;
-import NI.service.NIService;
+import com.j0schi.server.NI.mapper.NILayerMapper;
+import com.j0schi.server.NI.mapper.NINeuronMapper;
+import com.j0schi.server.NI.mapper.NISampleMapper;
+import com.j0schi.server.NI.model.NILayer;
+import com.j0schi.server.NI.model.NINetwork;
+import com.j0schi.server.NI.mapper.NINetworkMapper;
+import com.j0schi.server.NI.model.NINeuron;
+import com.j0schi.server.NI.model.NISample;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

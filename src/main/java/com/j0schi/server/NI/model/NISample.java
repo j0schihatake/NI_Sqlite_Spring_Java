@@ -1,4 +1,4 @@
-package NI.model;
+package com.j0schi.server.NI.model;
 
 import lombok.Data;
 import lombok.ToString;
@@ -29,7 +29,7 @@ public class NISample {
 
     public NILayer outputLayer = null;
 
-    public List<NILayer> layer;
+    public List<NILayer> layer = new ArrayList<>();
 
     //--------------------------------------- Constructors:
 
@@ -42,8 +42,8 @@ public class NISample {
         this.inputLayer = new NILayer();
         this.outputLayer = new NILayer();
 
-        inputLayer.setLayer(input);
-        outputLayer.setLayer(output);
+        inputLayer.setNeurons(input);
+        outputLayer.setNeurons(output);
         outputLayer.setLayerType(2);
     }
 
@@ -60,17 +60,17 @@ public class NISample {
         returned.description = description_new_sample;
 
         // Клонируем каждый входной нейрон:
-        for(int i = 0; i < sample.inputLayer.getLayer().size(); i++){
-            NINeuron next = sample.inputLayer.getLayer().get(i);
+        for(int i = 0; i < sample.inputLayer.getNeurons().size(); i++){
+            NINeuron next = sample.inputLayer.getNeurons().get(i);
             NINeuron nextClone = new NINeuron(next.getValue());
-            returned.inputLayer.getLayer().add(nextClone);
+            returned.inputLayer.getNeurons().add(nextClone);
         }
 
         // Клонируем каждый выходной нейрон:
-        for(int j = 0; j < sample.outputLayer.getLayer().size(); j++){
-            NINeuron next = sample.outputLayer.getLayer().get(j);
+        for(int j = 0; j < sample.outputLayer.getNeurons().size(); j++){
+            NINeuron next = sample.outputLayer.getNeurons().get(j);
             NINeuron nextClone = new NINeuron(next.getValue());
-            returned.outputLayer.getLayer().add(nextClone);
+            returned.outputLayer.getNeurons().add(nextClone);
         }
 
         return returned;

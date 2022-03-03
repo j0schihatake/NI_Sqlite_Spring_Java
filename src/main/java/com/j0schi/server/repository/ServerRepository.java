@@ -1,7 +1,5 @@
 package com.j0schi.server.repository;
 
-import com.j0schi.server.NI.components.NINetwork;
-import com.j0schi.server.mapper.NINetworkMapper;
 import com.j0schi.server.mapper.Vector3Mapper;
 import com.j0schi.server.model.Vector3;
 import lombok.RequiredArgsConstructor;
@@ -51,37 +49,4 @@ public class ServerRepository {
         }
         return vector3List;
     }
-
-    //-------------------------------NINetwork
-    public List<NINetwork> getAllNINetwork() {
-        StringBuilder query = new StringBuilder();
-        List<NINetwork> result = null;
-        try {
-            query.append("select * from network");
-            result = jdbcTemplate.query(query.toString(), new NINetworkMapper());
-            System.out.println("Query ok " + query);
-        } catch (Exception ex) {
-            System.out.println("Query error " + query);
-            System.out.println(ex.getMessage());
-        }
-        return result;
-    }
-
-    public NINetwork getNINetworkByNetworkName(String networkName){
-        NINetwork result = null;
-        StringBuilder query = new StringBuilder();
-        try{
-            query.append("select * from network where name = '")
-                    .append(networkName)
-                    .append("'");
-            result = jdbcTemplate.queryForObject(query.toString(), new NINetworkMapper());
-            System.out.println("Query ok " + query);
-        }catch(Exception ex){
-            System.out.println("Query error " + query);
-            System.out.println(ex.getMessage());
-        }
-        return result;
-    }
-
-
 }

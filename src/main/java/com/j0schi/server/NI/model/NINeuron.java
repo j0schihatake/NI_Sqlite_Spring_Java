@@ -1,4 +1,4 @@
-package NI.model;
+package com.j0schi.server.NI.model;
 
 import lombok.Data;
 import lombok.ToString;

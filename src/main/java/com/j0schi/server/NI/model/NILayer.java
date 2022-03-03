@@ -1,4 +1,4 @@
-package NI.model;
+package com.j0schi.server.NI.model;
 
 import lombok.Data;
 import lombok.ToString;
@@ -26,7 +26,7 @@ public class NILayer {
 
     private String tableName = "no_name_layer_table";
 
-    private List<NINeuron> layer = new ArrayList<>();
+    private List<NINeuron> neurons = new ArrayList<>();
 
     //-------------------------------- Constructors:
 
@@ -34,14 +34,14 @@ public class NILayer {
 
     public NILayer(String tableName, ArrayList<NINeuron> neurons){
         this.tableName = tableName;
-        this.layer = neurons;
+        this.neurons = neurons;
     }
 
     //--------------------------------------- Utils:
 
     public NINeuron getMax(){
         NINeuron result = null;
-        for(NINeuron neuron : getLayer()){
+        for(NINeuron neuron : this.getNeurons()){
             if(result == null || result.getValue() < neuron.getValue())
                 result = neuron;
         }

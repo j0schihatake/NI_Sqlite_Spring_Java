@@ -1,8 +1,8 @@
-package NI.util;
-import NI.model.NILayer;
-import NI.model.NINetwork;
-import NI.model.NINeuron;
-import NI.model.NISample;
+package com.j0schi.server.NI.util;
+import com.j0schi.server.NI.model.NILayer;
+import com.j0schi.server.NI.model.NINetwork;
+import com.j0schi.server.NI.model.NINeuron;
+import com.j0schi.server.NI.model.NISample;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -113,9 +113,9 @@ public class SqLiteUtil {
         try {
             createNILayerTable(layer.getTableName());
 
-            for (int i = 0; i < layer.getLayer().size(); i++) {
+            for (int i = 0; i < layer.getNeurons().size(); i++) {
                 StringBuilder builder = new StringBuilder();
-                NINeuron next = layer.getLayer().get(i);
+                NINeuron next = layer.getNeurons().get(i);
                 builder.append("INSERT INTO ");
                 builder.append(layer.getTableName());
                 builder.append("(");
@@ -168,8 +168,8 @@ public class SqLiteUtil {
                 nextNeuron.setDescription(description);
                 nextNeuron.setValue(Float.parseFloat(value));
 
-                if (!resultLayer.getLayer().contains(nextNeuron))
-                    resultLayer.getLayer().add(nextNeuron);
+                if (!resultLayer.getNeurons().contains(nextNeuron))
+                    resultLayer.getNeurons().add(nextNeuron);
             }
         }finally {
             if(resSet!=null)

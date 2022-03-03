@@ -1,6 +1,6 @@
-package NI.mapper;
+package com.j0schi.server.NI.mapper;
 
-import NI.model.NINetwork;
+import com.j0schi.server.NI.model.NINetwork;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

@@ -1,10 +1,14 @@
-package NI.util;
+package com.j0schi.server.NI.util;
 
-import NI.model.NILayer;
-import NI.model.NINetwork;
-import NI.model.NINeuron;
-import NI.model.NISample;
+import com.j0schi.server.NI.model.NILayer;
+import com.j0schi.server.NI.model.NINetwork;
+import com.j0schi.server.NI.model.NINeuron;
+import com.j0schi.server.NI.model.NISample;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
+@AllArgsConstructor
 public class NIQueryUtil {
 
     //----------------------------------- INSERT:

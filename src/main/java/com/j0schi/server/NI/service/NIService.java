@@ -1,11 +1,11 @@
-package NI.service;
+package com.j0schi.server.NI.service;
 
-import NI.model.NILayer;
-import NI.model.NINetwork;
-import NI.model.NINeuron;
-import NI.model.NISample;
-import NI.repository.NIRepository;
-import NI.util.NIQueryUtil;
+import com.j0schi.server.NI.model.NILayer;
+import com.j0schi.server.NI.model.NINetwork;
+import com.j0schi.server.NI.model.NINeuron;
+import com.j0schi.server.NI.model.NISample;
+import com.j0schi.server.NI.repository.NIRepository;
+import com.j0schi.server.NI.util.NIQueryUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +48,7 @@ public class NIService {
             assert layers != null;
             for(NILayer layer: layers){
                 List<NINeuron> neurons = getAllNINeuronByNetworkNameAndSampleNameAndLayerId(network.getName(), sample.getSampleName(), layer.getLayerId());
-                layer.setLayer(neurons);
+                layer.setNeurons(neurons);
             }
             sample.setLayer(layers);
         }
@@ -68,7 +68,7 @@ public class NIService {
                 assert layers != null;
                 for(NILayer layer: layers){
                     List<NINeuron> neurons = niRepository.getNINeurons(niQueryUtil.selectAllNINeuronByNetworkNameAndLayerId(network.getName(), sample.getSampleName(), layer.getLayerId()));
-                    layer.setLayer(neurons);
+                    layer.setNeurons(neurons);
                 }
                 sample.setLayer(layers);
             }
@@ -84,13 +84,16 @@ public class NIService {
 
         result = niRepository.execute(niQueryUtil.insertNINetwork(niNetwork));
 
+        assert niNetwork.getSamples() != null;
         for(NISample sample: niNetwork.getSamples()){
             assert result != true;
             result = niRepository.execute(niQueryUtil.insertNISample(sample));
+            assert sample.getLayer() != null;
             for(NILayer layer: sample.getLayer()){
                 assert result != true;
                 result = niRepository.execute(niQueryUtil.insertNILayer(layer));
-                for(NINeuron neuron: layer.getLayer()){
+                assert layer.getNeurons() != null;
+                for(NINeuron neuron: layer.getNeurons()){
                     assert result != true;
                     result = niRepository.execute(niQueryUtil.insertNINeuron(neuron));
                 }

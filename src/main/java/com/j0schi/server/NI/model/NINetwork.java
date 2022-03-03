@@ -1,6 +1,6 @@
-package NI.model;
+package com.j0schi.server.NI.model;
 
-import NI.util.Utils;
+import com.j0schi.server.NI.util.Utils;
 import lombok.Data;
 import lombok.ToString;
 
@@ -74,9 +74,9 @@ public class NINetwork {
 
     public void initialize(NISample sample){
 
-        INPUT_NEURONS = sample.inputLayer.getLayer().size();
-        HIDDEN_NEURONS = sample.inputLayer.getLayer().size() - dest;
-        OUTPUT_NEURONS = sample.outputLayer.getLayer().size();
+        INPUT_NEURONS = sample.inputLayer.getNeurons().size();
+        HIDDEN_NEURONS = sample.inputLayer.getNeurons().size() - dest;
+        OUTPUT_NEURONS = sample.outputLayer.getNeurons().size();
 
         // Веса
         // Вход скрытых ячеек(со смещением)
@@ -116,12 +116,12 @@ public class NINetwork {
 
                 // тут подаем на входы и выходы "правильные значения"
 
-                for(int j = 0; j < sample.inputLayer.getLayer().size(); j++){
-                    inputs[j] = sample.inputLayer.getLayer().get(j).getValue();
+                for(int j = 0; j < sample.inputLayer.getNeurons().size(); j++){
+                    inputs[j] = sample.inputLayer.getNeurons().get(j).getValue();
                 }
 
-                for(int k = 0; k < sample.outputLayer.getLayer().size(); k++){
-                    outputs[k] = sample.outputLayer.getLayer().get(k).getValue();
+                for(int k = 0; k < sample.outputLayer.getNeurons().size(); k++){
+                    outputs[k] = sample.outputLayer.getNeurons().get(k).getValue();
                 }
 
                 feedForward();
@@ -129,8 +129,8 @@ public class NINetwork {
                 err = 0.0f;
 
                 // Квадратичная ошибка для каждого из выходов:
-                for(int m = 0; m < sample.outputLayer.getLayer().size(); m++){
-                    err += Math.sqrt((sample.outputLayer.getLayer().get(m).getValue() - actual[0]));
+                for(int m = 0; m < sample.outputLayer.getNeurons().size(); m++){
+                    err += Math.sqrt((sample.outputLayer.getNeurons().get(m).getValue() - actual[0]));
                 }
 
                 err = 0.5f * err;
@@ -273,14 +273,14 @@ public class NINetwork {
      */
     public NISample calculateResult(NISample sample){
 
-        for(int i = 0; i <  sample.inputLayer.getLayer().size(); i++){
-            inputs[i] = sample.inputLayer.getLayer().get(i).getValue();
+        for(int i = 0; i <  sample.inputLayer.getNeurons().size(); i++){
+            inputs[i] = sample.inputLayer.getNeurons().get(i).getValue();
         }
 
         feedForward();
 
         for (int i = 0; i < actual.length; i++) {
-            sample.outputLayer.getLayer().get(i).setValue(actual[i]);
+            sample.outputLayer.getNeurons().get(i).setValue(actual[i]);
         }
         return sample;
     }
