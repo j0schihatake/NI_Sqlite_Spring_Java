@@ -1,8 +1,8 @@
-package com.j0schi.server.NI.util;
-import com.j0schi.server.NI.components.NILayer;
-import com.j0schi.server.NI.components.NINetwork;
-import com.j0schi.server.NI.components.NINeuron;
-import com.j0schi.server.NI.components.NISample;
+package NI.util;
+import NI.model.NILayer;
+import NI.model.NINetwork;
+import NI.model.NINeuron;
+import NI.model.NISample;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -126,8 +126,8 @@ public class SqLiteUtil {
                 builder.append(") VALUES (");
                 builder.append("'" + sampleName + "',");
                 builder.append("'" + layer.getLayerType() + "',");
-                builder.append("'" + next.description + "',");
-                builder.append("'" + next.value + "');");
+                builder.append("'" + next.getDescription() + "',");
+                builder.append("'" + next.getValue() + "');");
 
                 statmt = conn.createStatement();
                 statmt.execute(builder.toString());
@@ -165,8 +165,8 @@ public class SqLiteUtil {
                 String value = resSet.getString("value");
 
                 NINeuron nextNeuron = new NINeuron();
-                nextNeuron.description = description;
-                nextNeuron.value = Float.parseFloat(value);
+                nextNeuron.setDescription(description);
+                nextNeuron.setValue(Float.parseFloat(value));
 
                 if (!resultLayer.getLayer().contains(nextNeuron))
                     resultLayer.getLayer().add(nextNeuron);
@@ -370,16 +370,16 @@ public class SqLiteUtil {
         builder.append("'table_name', ");
         builder.append("'description', ");
         builder.append("'hidden_layer_count') VALUES (");
-        builder.append("'" + network.tableName + "',");
-        builder.append("'" + network.description + "',");
-        builder.append("'" + network.HIDDEN_LAYER_COUNT + "'");
+        builder.append("'" + network.getTableName() + "',");
+        builder.append("'" + network.getDescription() + "',");
+        builder.append("'" + network.getHIDDEN_LAYER_COUNT() + "'");
         builder.append(");");
 
         statmt.execute(builder.toString());
 
-        for(int i =0; i < network.samples.size(); i++){
-            NISample nextSample = network.samples.get(i);
-            insertNISample(network.tableName, nextSample);
+        for(int i =0; i < network.getSamples().size(); i++){
+            NISample nextSample = network.getSamples().get(i);
+            insertNISample(network.getTableName(), nextSample);
         }
 
         closeDB();
@@ -399,14 +399,14 @@ public class SqLiteUtil {
 
         while(resSet.next())
         {
-            network.tableName = resSet.getString("table_name");
-            network.description = resSet.getString("description");
-            network.HIDDEN_LAYER_COUNT = Integer.parseInt(resSet.getString("hidden_layer_count"));
+            network.setTableName(resSet.getString("table_name"));
+            network.setDescription(resSet.getString("description"));
+            network.setHIDDEN_LAYER_COUNT(Integer.parseInt(resSet.getString("hidden_layer_count")));
         }
 
         ArrayList<NISample> samples = selectNISamplesList(networkName);
 
-        network.samples = samples;
+        network.setSamples(samples);
 
         closeDB();
 

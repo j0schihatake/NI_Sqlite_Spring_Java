@@ -1,4 +1,4 @@
-package com.j0schi.server.NI.util;
+package NI.util;
 
 import java.util.Random;
 

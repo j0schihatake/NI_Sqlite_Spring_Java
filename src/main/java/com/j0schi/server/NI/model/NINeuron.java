@@ -1,4 +1,4 @@
-package com.j0schi.server.NI.components;
+package NI.model;
 
 import lombok.Data;
 import lombok.ToString;
@@ -7,9 +7,19 @@ import lombok.ToString;
 @ToString
 public class NINeuron {
 
-    public String description = "Понятное пояснение что обозначает данный нейрон.";
+    private int pk;
 
-    public float value;
+    private int layerId;
+
+    private String networkName;
+
+    private String sampleName;
+
+    private int layerType;
+
+    private String description = "Понятное пояснение что обозначает данный нейрон.";
+
+    private float value;
 
     // --------------------------------------- Constructors:
 

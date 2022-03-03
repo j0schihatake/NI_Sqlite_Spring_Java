@@ -1,9 +1,10 @@
-package com.j0schi.server.NI.components;
+package NI.model;
 
 import lombok.Data;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * NISample - пример входной набор данных + заданный(известный) результат.
@@ -12,9 +13,13 @@ import java.util.ArrayList;
 @ToString
 public class NISample {
 
+    public static final String SAMPLE_PREFIX = "_samples";
+
+    private int pk;
+
     private String networkName;
 
-    public static final String SAMPLE_PREFIX = "_samples";
+    private String sampleName;
 
     public String tableName = "test_nisample";
 
@@ -23,6 +28,8 @@ public class NISample {
     public NILayer inputLayer = null;
 
     public NILayer outputLayer = null;
+
+    public List<NILayer> layer;
 
     //--------------------------------------- Constructors:
 
@@ -55,14 +62,14 @@ public class NISample {
         // Клонируем каждый входной нейрон:
         for(int i = 0; i < sample.inputLayer.getLayer().size(); i++){
             NINeuron next = sample.inputLayer.getLayer().get(i);
-            NINeuron nextClone = new NINeuron(next.value);
+            NINeuron nextClone = new NINeuron(next.getValue());
             returned.inputLayer.getLayer().add(nextClone);
         }
 
         // Клонируем каждый выходной нейрон:
         for(int j = 0; j < sample.outputLayer.getLayer().size(); j++){
             NINeuron next = sample.outputLayer.getLayer().get(j);
-            NINeuron nextClone = new NINeuron(next.value);
+            NINeuron nextClone = new NINeuron(next.getValue());
             returned.outputLayer.getLayer().add(nextClone);
         }
 

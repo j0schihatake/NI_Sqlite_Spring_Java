@@ -1,10 +1,11 @@
-package com.j0schi.server.NI.components;
+package NI.model;
 
-import com.j0schi.server.NI.util.Utils;
+import NI.util.Utils;
 import lombok.Data;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Универсальная нейронная сеть.
@@ -13,57 +14,63 @@ import java.util.ArrayList;
 @ToString
 public class NINetwork {
 
+    private int pk;
+
     private String name;
 
-    public String description = "Сеть без имени.";
+    private String description = "Сеть без имени.";
 
-    public String tableName = "no_name_ninetwork";
+    private String tableName = "no_name_ninetwork";
 
-    public ArrayList<NISample> samples = new ArrayList<NISample>();
+    private List<NISample> samples = new ArrayList<NISample>();
 
     // Конвертирую пример из книги:
-    public int INPUT_NEURONS;
-    public int HIDDEN_NEURONS;
-    public int OUTPUT_NEURONS;
+    private int INPUT_NEURONS;
+    private int HIDDEN_NEURONS;
+    private int OUTPUT_NEURONS;
 
     // Смещение
-    public int dest = 1;
+    private int dest = 1;
 
-    public int HIDDEN_LAYER_COUNT = 1;
+    private int HIDDEN_LAYER_COUNT = 1;
 
     // Коэффициент обучения:
-    public float LEARN_RATE = 0.2f;
+    private float LEARN_RATE = 0.2f;
 
     // Случайные веса:
-    public float RAND_WEIGHT = 0f;
+    private float RAND_WEIGHT = 0f;
 
-    public float RAND_MAX = 0.5f;
+    private float RAND_MAX = 0.5f;
 
-    // Входной данные от пользователя
-    public NISample toSelectAction = null;
+    // Входной данные от пользователя:
+    private NISample toSelectAction = null;
 
-    // Веса
-    // Вход скрытых ячеек(со смещением)
-    public float[][] wih;
+    // Веса:
+    // Вход скрытых ячеек(со смещением):
+    private float[][] wih;
 
-    // Вход выходных ячеек(со смещением)
-    public float[][] who;
+    // Вход выходных ячеек(со смещением):
+    private float[][] who;
 
-    // Активаторы
-    public float[] inputs;
-    public float[] hidden;
-    public float[] outputs;
-    public float[] actual;
+    // Активаторы:
+    private float[] inputs;
+    private float[] hidden;
+    private float[] outputs;
+    private float[] actual;
 
-    // Ошибки
-    public float[] erro;
-    public float[] errh;
-    public float err = 0f;
-    public int sum = 0;
+    // Ошибки:
+    private float[] erro;
+    private float[] errh;
+    private float err = 0f;
+    private int sum = 0;
 
-    public boolean learn = false;
+    private boolean learn = false;
+
+    // --------------------------------------- Constructors:
 
     public NINetwork(){}
+
+    //--------------------------------------- Utils:
 
     public void initialize(NISample sample){
 
@@ -110,11 +117,11 @@ public class NINetwork {
                 // тут подаем на входы и выходы "правильные значения"
 
                 for(int j = 0; j < sample.inputLayer.getLayer().size(); j++){
-                    inputs[j] = sample.inputLayer.getLayer().get(j).value;
+                    inputs[j] = sample.inputLayer.getLayer().get(j).getValue();
                 }
 
                 for(int k = 0; k < sample.outputLayer.getLayer().size(); k++){
-                    outputs[k] = sample.outputLayer.getLayer().get(k).value;
+                    outputs[k] = sample.outputLayer.getLayer().get(k).getValue();
                 }
 
                 feedForward();
@@ -123,7 +130,7 @@ public class NINetwork {
 
                 // Квадратичная ошибка для каждого из выходов:
                 for(int m = 0; m < sample.outputLayer.getLayer().size(); m++){
-                    err += Math.sqrt((sample.outputLayer.getLayer().get(m).value - actual[0]));
+                    err += Math.sqrt((sample.outputLayer.getLayer().get(m).getValue() - actual[0]));
                 }
 
                 err = 0.5f * err;
@@ -142,7 +149,7 @@ public class NINetwork {
     }
 
     //Метод назначает случайные веса
-    void assignRandomWeights() {
+    private void assignRandomWeights() {
         int hid, inp, out;
 
         // Назначаем случайные веса(по идее только первый раз)
@@ -161,16 +168,16 @@ public class NINetwork {
     }
 
     // Значение функции сжатия ?
-    float sigmoid(float val) {
+    private float sigmoid(float val) {
         return (float) (1.0f / (1.0f + Math.exp(-val)));
     }
 
-    float sigmoidDerivative(float val) {
+    private float sigmoidDerivative(float val) {
         return (val * (1.0f - val));
     }
 
     // Прямое распространение
-    void feedForward() {
+    private void feedForward() {
         int inp, hid, outs;
         float sum;
 
@@ -202,7 +209,7 @@ public class NINetwork {
     }
 
     // Обратное распространение(обучение)
-    void backPropagate() {
+    private void backPropagate() {
         int inp, hid, out;
 
         // Вычислить ошибку выходного слоя (шаг 3 для выходных ячеек)
@@ -243,7 +250,7 @@ public class NINetwork {
     }
 
     // Функция победитель получает все(по идее моя выборка также длжна работать):
-    int action(float[] vector) {
+    private int action(float[] vector) {
         int index, sel;
         float max;
 
@@ -267,13 +274,13 @@ public class NINetwork {
     public NISample calculateResult(NISample sample){
 
         for(int i = 0; i <  sample.inputLayer.getLayer().size(); i++){
-            inputs[i] = sample.inputLayer.getLayer().get(i).value;
+            inputs[i] = sample.inputLayer.getLayer().get(i).getValue();
         }
 
         feedForward();
 
         for (int i = 0; i < actual.length; i++) {
-            sample.outputLayer.getLayer().get(i).value = actual[i];
+            sample.outputLayer.getLayer().get(i).setValue(actual[i]);
         }
         return sample;
     }
