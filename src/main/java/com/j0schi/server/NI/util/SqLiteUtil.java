@@ -43,7 +43,6 @@ public class SqLiteUtil {
         conn = null;
         Class.forName("org.sqlite.JDBC");
         conn = DriverManager.getConnection("jdbc:sqlite:" + dbName + ".s3db");
-
         System.out.println("База Подключена!");
     }
 
@@ -231,19 +230,19 @@ public class SqLiteUtil {
         ResultSet resSet = null;
 
         try {
-            sample.inputLayer.setTableName(sampleTableName + DEFAULT_LAYER_NAME);
+            //sample.inputLayer.setTableName(sampleTableName + DEFAULT_LAYER_NAME);
             //sample.inputLayer.setTableName(sampleTableName + NILayer.INPUT_LAYER_PREFIX);
-            sample.outputLayer.setTableName(sampleTableName + DEFAULT_LAYER_NAME);
+            //sample.outputLayer.setTableName(sampleTableName + DEFAULT_LAYER_NAME);
             //sample.outputLayer.setTableName(sampleTableName + NILayer.OUTPUT_LAYER_PREFIX);
-            sample.outputLayer.setLayerType(2);
+            //sample.outputLayer.setLayerType(2);
 
-            String fullSampleTableName = sampleTableName + NISample.SAMPLE_PREFIX;
+            //String fullSampleTableName = sampleTableName + NISample.SAMPLE_PREFIX;
 
-            createNISampleTable(fullSampleTableName);
+            //createNISampleTable(fullSampleTableName);
 
             StringBuilder builder = new StringBuilder();
             builder.append("INSERT INTO '");
-            builder.append(fullSampleTableName);
+            //builder.append(fullSampleTableName);
             builder.append("' (");
             builder.append("'description', ");
             builder.append("'network_name', ");
@@ -254,15 +253,15 @@ public class SqLiteUtil {
             builder.append("'" + sample.description + "', ");
             builder.append("'" + sampleTableName + "', ");
             builder.append("'" + sample.tableName + "', ");
-            builder.append("'" + sample.inputLayer.getTableName() + "', ");
-            builder.append("'" + sample.outputLayer.getTableName() + "'");
+            //builder.append("'" + sample.inputLayer.getTableName() + "', ");
+            //builder.append("'" + sample.outputLayer.getTableName() + "'");
             builder.append(");");
 
             statmt.execute(builder.toString());
 
             // Сохранение нейронов по слоям:
-            insertNILayer(sample.tableName, sample.inputLayer);
-            insertNILayer(sample.tableName, sample.outputLayer);
+            //insertNILayer(sample.tableName, sample.inputLayer);
+            //insertNILayer(sample.tableName, sample.outputLayer);
         }finally {
             if(resSet!=null)
                 resSet.close();
@@ -281,6 +280,7 @@ public class SqLiteUtil {
     public static ArrayList<NISample> selectNISamplesList(String networkTableName) throws SQLException
     {
         ArrayList<NISample> result = new ArrayList<NISample>();
+                /*
 
         Statement statmt = conn.createStatement();
         ResultSet resSet = null;
@@ -310,6 +310,8 @@ public class SqLiteUtil {
                 statmt.close();
         }
 
+
+         */
         System.out.println("Загружен новый пример NISample из базы.");
 
         return result;

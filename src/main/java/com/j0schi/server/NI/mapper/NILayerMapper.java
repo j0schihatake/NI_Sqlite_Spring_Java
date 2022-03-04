@@ -11,7 +11,6 @@ public class NILayerMapper implements RowMapper<NILayer> {
     @Override
     public NILayer mapRow(ResultSet resultSet, int i) throws SQLException {
         NILayer result = new NILayer();
-        result.setPk(resultSet.getInt("id"));
         result.setLayerId(resultSet.getInt("layer_id"));
         result.setNetworkName(resultSet.getString("network_name"));
         result.setSampleName(resultSet.getString("sample_name"));

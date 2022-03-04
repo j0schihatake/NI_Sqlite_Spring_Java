@@ -1,13 +1,13 @@
 package com.j0schi.server.NI.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
 @ToString
+@Builder(toBuilder=true)
 public class NINeuron {
-
-    private int pk;
 
     private int layerId;
 
@@ -39,7 +39,7 @@ public class NINeuron {
 
     // ---------------------------------------- Setters:
 
-    //Значение всегда преобразуется во float;
+    // Значение всегда преобразуется во float;
 
     public void setValue(int o){
         this.value = o;

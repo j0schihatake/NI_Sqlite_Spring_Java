@@ -1,8 +1,7 @@
 package com.j0schi.server.NI.model;
 
 import com.j0schi.server.NI.util.Utils;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +11,10 @@ import java.util.List;
  */
 @Data
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder=true)
 public class NINetwork {
-
-    private int pk;
 
     private String name;
 
@@ -43,7 +43,7 @@ public class NINetwork {
     private float RAND_MAX = 0.5f;
 
     // Входной данные от пользователя:
-    private NISample toSelectAction = null;
+    private NISample inputSample = null;
 
     // Веса:
     // Вход скрытых ячеек(со смещением):
@@ -66,17 +66,13 @@ public class NINetwork {
 
     private boolean learn = false;
 
-    // --------------------------------------- Constructors:
-
-    public NINetwork(){}
-
     //--------------------------------------- Utils:
 
-    public void initialize(NISample sample){
+    public NINetwork initialize(NISample sample){
 
-        INPUT_NEURONS = sample.inputLayer.getNeurons().size();
-        HIDDEN_NEURONS = sample.inputLayer.getNeurons().size() - dest;
-        OUTPUT_NEURONS = sample.outputLayer.getNeurons().size();
+        INPUT_NEURONS = sample.getLayer().get(0).getNeurons().size();
+        HIDDEN_NEURONS = INPUT_NEURONS - dest;
+        OUTPUT_NEURONS = sample.getLayer().get(1).getNeurons().size();
 
         // Веса
         // Вход скрытых ячеек(со смещением)
@@ -97,13 +93,14 @@ public class NINetwork {
 
         // Инициализировать генератор случайных чисел
         assignRandomWeights();
+        return this;
     }
 
     /**
      * Выполнет обучение сети:
      * 100000
      */
-    public void learn(int iterationCount){
+    public NINetwork learn(int iterationCount){
 
         int iterations = 0;
 
@@ -115,13 +112,12 @@ public class NINetwork {
                 NISample sample = samples.get(i);
 
                 // тут подаем на входы и выходы "правильные значения"
-
-                for(int j = 0; j < sample.inputLayer.getNeurons().size(); j++){
-                    inputs[j] = sample.inputLayer.getNeurons().get(j).getValue();
+                for(int j = 0; j < sample.getLayer().get(0).getNeurons().size(); j++){
+                    inputs[j] = sample.getLayer().get(0).getNeurons().get(j).getValue();
                 }
 
-                for(int k = 0; k < sample.outputLayer.getNeurons().size(); k++){
-                    outputs[k] = sample.outputLayer.getNeurons().get(k).getValue();
+                for(int k = 0; k < sample.getLayer().get(1).getNeurons().size(); k++){
+                    outputs[k] = sample.getLayer().get(1).getNeurons().get(k).getValue();
                 }
 
                 feedForward();
@@ -129,8 +125,8 @@ public class NINetwork {
                 err = 0.0f;
 
                 // Квадратичная ошибка для каждого из выходов:
-                for(int m = 0; m < sample.outputLayer.getNeurons().size(); m++){
-                    err += Math.sqrt((sample.outputLayer.getNeurons().get(m).getValue() - actual[0]));
+                for(int m = 0; m < sample.getLayer().get(1).getNeurons().size(); m++){
+                    err += Math.sqrt((sample.getLayer().get(1).getNeurons().get(m).getValue() - actual[0]));
                 }
 
                 err = 0.5f * err;
@@ -141,43 +137,11 @@ public class NINetwork {
                 backPropagate();
             }
         }
-    }
-
-    // Получаем случайные веса
-    public float getRandomWEIGHT() {
-        return (float) Utils.randomFloat(-0.5, 0.5, 0.01);
-    }
-
-    //Метод назначает случайные веса
-    private void assignRandomWeights() {
-        int hid, inp, out;
-
-        // Назначаем случайные веса(по идее только первый раз)
-        for (inp = 0; inp < INPUT_NEURONS + dest; inp++) {
-            for (hid = 0; hid < HIDDEN_NEURONS; hid++) {
-                RAND_WEIGHT = getRandomWEIGHT();
-                wih[inp][hid] = RAND_WEIGHT;
-            }
-        }
-
-        for (hid = 0; hid < HIDDEN_NEURONS + dest; hid++) {
-            for (out = 0; out < OUTPUT_NEURONS; out++) {
-                who[hid][out] = RAND_WEIGHT;
-            }
-        }
-    }
-
-    // Значение функции сжатия ?
-    private float sigmoid(float val) {
-        return (float) (1.0f / (1.0f + Math.exp(-val)));
-    }
-
-    private float sigmoidDerivative(float val) {
-        return (val * (1.0f - val));
+        return this;
     }
 
     // Прямое распространение
-    private void feedForward() {
+    private NINetwork feedForward() {
         int inp, hid, outs;
         float sum;
 
@@ -206,10 +170,11 @@ public class NINetwork {
             //}
             actual[outs] = sigmoid(sum);
         }
+        return this;
     }
 
     // Обратное распространение(обучение)
-    private void backPropagate() {
+    private NINetwork backPropagate() {
         int inp, hid, out;
 
         // Вычислить ошибку выходного слоя (шаг 3 для выходных ячеек)
@@ -247,10 +212,47 @@ public class NINetwork {
                 wih[INPUT_NEURONS][hid] += (LEARN_RATE * errh[hid]);
             //}
         }
+        return this;
     }
 
+    //Метод назначает случайные веса
+    private NINetwork assignRandomWeights() {
+        int hid, inp, out;
+
+        // Назначаем случайные веса(по идее только первый раз)
+        for (inp = 0; inp < INPUT_NEURONS + dest; inp++) {
+            for (hid = 0; hid < HIDDEN_NEURONS; hid++) {
+                RAND_WEIGHT = getRandomWEIGHT();
+                wih[inp][hid] = RAND_WEIGHT;
+            }
+        }
+
+        for (hid = 0; hid < HIDDEN_NEURONS + dest; hid++) {
+            for (out = 0; out < OUTPUT_NEURONS; out++) {
+                who[hid][out] = RAND_WEIGHT;
+            }
+        }
+        return this;
+    }
+
+    // Получаем случайные веса
+    private float getRandomWEIGHT() {
+        return (float) Utils.randomFloat(-0.5, 0.5, 0.01);
+    }
+
+    // Значение функции сжатия ?
+    private float sigmoid(float val) {
+        return (float) (1.0f / (1.0f + Math.exp(-val)));
+    }
+
+    private float sigmoidDerivative(float val) {
+        return (val * (1.0f - val));
+    }
+
+    //------------------------ Получение результатов(на вход подается пример с пустым выходным слоем):
+
     // Функция победитель получает все(по идее моя выборка также длжна работать):
-    private int action(float[] vector) {
+    public int action(float[] vector) {
         int index, sel;
         float max;
 
@@ -258,29 +260,29 @@ public class NINetwork {
         max = vector[sel];
 
         for (index = 1; index < OUTPUT_NEURONS; index++) {
-            if (vector[index] > max) { }
+            if (vector[index] > max) {
+                max = vector[index];
+                sel = index;
+            }
         }
-
-        return 0;
+        return sel;
     }
-
-    //------------------------ Получение результатов(на вход подается пример с пустым выходным слоем):
 
     /**
      * Метод просчитывает и проставляет результаты в указанный пример:
      * @param sample
      * @return
      */
-    public NISample calculateResult(NISample sample){
+    public NISample getResult(NISample sample){
 
-        for(int i = 0; i <  sample.inputLayer.getNeurons().size(); i++){
-            inputs[i] = sample.inputLayer.getNeurons().get(i).getValue();
+        for(int i = 0; i <  sample.getLayer().get(0).getNeurons().size(); i++){
+            inputs[i] = sample.getLayer().get(0).getNeurons().get(i).getValue();
         }
 
         feedForward();
 
         for (int i = 0; i < actual.length; i++) {
-            sample.outputLayer.getNeurons().get(i).setValue(actual[i]);
+            sample.getLayer().get(sample.getLayer().size()-1).getNeurons().get(i).setValue(actual[i]);
         }
         return sample;
     }

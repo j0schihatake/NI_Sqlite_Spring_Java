@@ -11,7 +11,6 @@ public class NINetworkMapper implements RowMapper<NINetwork> {
     @Override
     public NINetwork mapRow(ResultSet resultSet, int i) throws SQLException {
         NINetwork result = new NINetwork();
-        result.setPk(resultSet.getInt("id"));
         result.setName(resultSet.getString("name"));
         result.setDescription(resultSet.getString("description"));
         result.setTableName(resultSet.getString("table_name"));

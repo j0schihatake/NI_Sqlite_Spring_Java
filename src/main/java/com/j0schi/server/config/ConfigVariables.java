@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "config")
 public class ConfigVariables {
-    private String dbDriver;
-    private String dbUrl;
-    private String dbUser;
-    private String dbPassword;
+    private String dbDriver = "org.sqlite.JDBC";
+    private String dbUrl = "jdbc:sqlite:ExampleForBook.s3db";
+    private String dbUser = "";
+    private String dbPassword = "";
 }

@@ -21,58 +21,62 @@ public class NIService {
 
     //------------------------------ NINeuron
     public List<NINeuron> getAllNINeuronByNetworkNameAndSampleNameAndLayerId(String networkName, String sampleName, int layerId){
-        return niRepository.getNINeurons(niQueryUtil.selectAllNINeuronByNetworkNameAndLayerId(networkName, sampleName, layerId));
+        return niRepository.getNINeurons(niQueryUtil.selectAllNINeuronByNetworkNameAndLayerIdQuery(networkName, sampleName, layerId));
     }
 
     //------------------------------ NILayer
     public List<NILayer> getAllNILayerByNetworkNameAndSampleName(String networkName, String sampleName){
-        return niRepository.getNILayers(niQueryUtil.selectAllNILayersByNetworkNameAndSampleName(networkName, sampleName));
+        return niRepository.getNILayers(niQueryUtil.selectAllNILayersByNetworkNameAndSampleNameQuery(networkName, sampleName));
     }
 
     //------------------------------ NISample
     public List<NISample> getAllNISampleByNetworkName(String networkName){
-        return niRepository.getNISamples(niQueryUtil.selectAllNISampleByNetworkName(networkName));
+        return niRepository.getNISamples(niQueryUtil.selectAllNISampleByNetworkNameQuery(networkName));
     }
 
     //------------------------------ NINetwork
 
     public NINetwork getNINetworkByNetworkName(String networkName){
-        NINetwork network = niRepository.getNINetwork(niQueryUtil.selectNINetworkByNetworkName(networkName));
-        assert network != null;
+        NINetwork network = niRepository.getNINetwork(niQueryUtil.selectNINetworkByNetworkNameQuery(networkName));
 
         List<NISample> samples = getAllNISampleByNetworkName(networkName);
-        assert samples != null;
 
-        for(NISample sample: samples){
-            List<NILayer> layers = getAllNILayerByNetworkNameAndSampleName(network.getName(), sample.getSampleName());
-            assert layers != null;
-            for(NILayer layer: layers){
-                List<NINeuron> neurons = getAllNINeuronByNetworkNameAndSampleNameAndLayerId(network.getName(), sample.getSampleName(), layer.getLayerId());
-                layer.setNeurons(neurons);
+        if(samples != null) {
+            for (NISample sample : samples) {
+                List<NILayer> layers = getAllNILayerByNetworkNameAndSampleName(network.getName(), sample.getSampleName());
+                if (layers != null) {
+                    for (NILayer layer : layers) {
+                        List<NINeuron> neurons = getAllNINeuronByNetworkNameAndSampleNameAndLayerId(network.getName(), sample.getSampleName(), layer.getLayerId());
+                        layer.setNeurons(neurons);
+                    }
+                }
+                sample.setLayer(layers);
             }
-            sample.setLayer(layers);
         }
         return network;
     }
 
     public List<NINetwork> getAllNINetwork(){
 
-        List<NINetwork> result = niRepository.getNINetworks(niQueryUtil.selectAllNINetworks());
-        assert result != null;
+        List<NINetwork> result = niRepository.getNINetworks(niQueryUtil.selectAllNINetworksQuery());
 
-        for(NINetwork network: result){
-            List<NISample> samples = niRepository.getNISamples(niQueryUtil.selectAllNISampleByNetworkName(network.getName()));
-            assert samples != null;
-            for(NISample sample: samples){
-                List<NILayer> layers = niRepository.getNILayers(niQueryUtil.selectAllNILayersByNetworkNameAndSampleName(network.getName(), sample.getSampleName()));
-                assert layers != null;
-                for(NILayer layer: layers){
-                    List<NINeuron> neurons = niRepository.getNINeurons(niQueryUtil.selectAllNINeuronByNetworkNameAndLayerId(network.getName(), sample.getSampleName(), layer.getLayerId()));
-                    layer.setNeurons(neurons);
+        if(result != null) {
+            for (NINetwork network : result) {
+                List<NISample> samples = niRepository.getNISamples(niQueryUtil.selectAllNISampleByNetworkNameQuery(network.getName()));
+                if(samples != null) {
+                    for (NISample sample : samples) {
+                        List<NILayer> layers = niRepository.getNILayers(niQueryUtil.selectAllNILayersByNetworkNameAndSampleNameQuery(network.getName(), sample.getSampleName()));
+                        if(layers != null) {
+                            for (NILayer layer : layers) {
+                                List<NINeuron> neurons = niRepository.getNINeurons(niQueryUtil.selectAllNINeuronByNetworkNameAndLayerIdQuery(network.getName(), sample.getSampleName(), layer.getLayerId()));
+                                layer.setNeurons(neurons);
+                            }
+                        }
+                        sample.setLayer(layers);
+                    }
                 }
-                sample.setLayer(layers);
+                network.setSamples(samples);
             }
-            network.setSamples(samples);
         }
         return result;
     }
@@ -80,26 +84,58 @@ public class NIService {
     //------------------------------------------------ INSERT:
     @Transactional
     public boolean insertOrUpdateNINetwork(NINetwork niNetwork){
+
         boolean result = false;
+        String action = "insert";
 
-        result = niRepository.execute(niQueryUtil.insertNINetwork(niNetwork));
+        if(niNetwork!=null) {
 
-        assert niNetwork.getSamples() != null;
-        for(NISample sample: niNetwork.getSamples()){
-            assert result != true;
-            result = niRepository.execute(niQueryUtil.insertNISample(sample));
-            assert sample.getLayer() != null;
-            for(NILayer layer: sample.getLayer()){
-                assert result != true;
-                result = niRepository.execute(niQueryUtil.insertNILayer(layer));
-                assert layer.getNeurons() != null;
-                for(NINeuron neuron: layer.getNeurons()){
-                    assert result != true;
-                    result = niRepository.execute(niQueryUtil.insertNINeuron(neuron));
+            NINetwork prevNetworkState = niRepository.getNINetwork(niQueryUtil.selectNINetworkByNetworkNameQuery(niNetwork.getName()));
+
+            if (prevNetworkState == null)
+                action = "update";
+
+            switch (action) {
+                case "insert":
+                    result = niRepository.execute(niQueryUtil.insertNINetworkQuery(niNetwork));
+
+                    if(niNetwork.getSamples() != null && niNetwork.getSamples().size()>0) {
+                        for (NISample sample : niNetwork.getSamples()) {
+                            result = niRepository.execute(niQueryUtil.insertNISampleQuery(sample));
+                            if (sample.getLayer() != null && sample.getLayer().size()>0) {
+                                for (NILayer layer : sample.getLayer()) {
+                                    result = niRepository.execute(niQueryUtil.insertNILayerQuery(layer));
+                                    if(layer.getNeurons()!=null && layer.getNeurons().size()>0) {
+                                        for (NINeuron neuron : layer.getNeurons()) {
+                                            result = niRepository.execute(niQueryUtil.insertNINeuronQuery(neuron));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case "update":
+                    result = niRepository.execute(niQueryUtil.updateNINetworkQuery(niNetwork));
+
+                    if(niNetwork.getSamples() != null && niNetwork.getSamples().size()>0) {
+                        for (NISample sample : niNetwork.getSamples()) {
+                            result = niRepository.execute(niQueryUtil.updateNISampleQuery(sample));
+                            if (sample.getLayer() != null && sample.getLayer().size()>0) {
+                                for (NILayer layer : sample.getLayer()) {
+                                    result = niRepository.execute(niQueryUtil.updateNILayerQuery(layer));
+                                    if(layer.getNeurons()!=null && layer.getNeurons().size()>0) {
+                                        for (NINeuron neuron : layer.getNeurons()) {
+                                            result = niRepository.execute(niQueryUtil.updateNINeuronQuery(neuron));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
                 }
-            }
         }
-
         return result;
     }
 }
