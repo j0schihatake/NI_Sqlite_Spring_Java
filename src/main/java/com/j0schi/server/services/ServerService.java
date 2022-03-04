@@ -2,7 +2,6 @@ package com.j0schi.server.services;
 
 import com.j0schi.server.NI.NITest;
 import com.j0schi.server.NI.service.NIService;
-import com.j0schi.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -13,9 +12,6 @@ import java.sql.SQLException;
 @Service
 @RequiredArgsConstructor
 public class ServerService {
-
-    //------------------------------ Repository
-    private final ServerRepository serverRepository;
 
     //------------------------------ Services
     private final NIService niService;

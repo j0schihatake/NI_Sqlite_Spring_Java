@@ -1,22 +1,17 @@
 package com.j0schi.server.NI.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @ToString
+@Builder(toBuilder=true)
 public class NILayer {
 
-    private int pk;
-
     private int layerId;                                                // порядковый номер слоя слева направо: 0.1.2...
-
-    public static final String INPUT_LAYER_PREFIX = "_input_layer";
-
-    public static final String OUTPUT_LAYER_PREFIX = "_output_layer";
 
     private String networkName;
 

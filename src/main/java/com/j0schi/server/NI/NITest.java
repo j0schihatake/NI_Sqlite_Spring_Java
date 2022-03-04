@@ -22,75 +22,74 @@ public class NITest {
 
     public void test(NIService niService) throws SQLException, ClassNotFoundException {
 
-        createTestContent(niService);
+        //createTestContent(niService);
 
-        // ArrayList<NINetwork> all = readNINetwork();
         List<NINetwork> all = niService.getAllNINetwork();
-
-        for(NINetwork network : all){
-            network.initialize(network.getSamples().get(0));
-            network.learn(10000);
-        }
-
-        // Пример использования:
-        NISample wonderSample = new NISample();
-        wonderSample.tableName = "wonder";
-        wonderSample.description = "Пример когда следует применить поведение: wonder.";
-
-        NILayer wonderInputLayer = new NILayer();
-
-        ArrayList<NINeuron> input = new ArrayList<NINeuron>();
-
-        NINeuron health = new NINeuron(2);
-        health.setDescription("Нейрон отражающий состояние здоровья.");
-
-        NINeuron knifle = new NINeuron(0);
-        knifle.setDescription("Нейрон отражающий наличие ножа.");
-
-        NINeuron gun = new NINeuron(0);
-        gun.setDescription("Нейрон отражающий наличие стрелкового оружия.");
-
-        NINeuron enemy = new NINeuron(3);
-        enemy.setDescription("Нейрон отражающий количество противников.");
-
-        wonderInputLayer.getNeurons().add(health);
-        wonderInputLayer.getNeurons().add(knifle);
-        wonderInputLayer.getNeurons().add(gun);
-        wonderInputLayer.getNeurons().add(enemy);
-
-        //"Attack", "Run", "Wander", "Hide"
-
-        NILayer wonderOuputLayer = new NILayer();
-        wonderOuputLayer.setLayerType(2);
-
-        NINeuron atack = new NINeuron(0);
-        atack.setDescription("Действие : атака");
-
-        NINeuron run = new NINeuron(0);
-        run.setDescription("Действие : побег");
-
-        NINeuron wander = new NINeuron(0);
-        wander.setDescription("Действие : наблюдение");
-
-        NINeuron hide = new NINeuron(0);
-        hide.setDescription("Действие : спрятаться");
-
-        wonderOuputLayer.getNeurons().add(atack);
-        wonderOuputLayer.getNeurons().add(run);
-        wonderOuputLayer.getNeurons().add(wander);
-        wonderOuputLayer.getNeurons().add(hide);
-
-        wonderSample.inputLayer = wonderInputLayer;
-        wonderSample.outputLayer = wonderOuputLayer;
 
         NISample completed = null;
 
-        if(all!=null && !all.isEmpty()) {
-            completed = all.get(0).calculateResult(wonderSample);
+        if(all != null && all.size() > 0) {
+            for (NINetwork network : all) {
+                network.initialize(network.getSamples().get(0));
+                network.learn(10000);
+            }
+
+            // Пример использования:
+            NISample wonderSample = new NISample();
+            wonderSample.tableName = "wonder";
+            wonderSample.description = "Пример когда следует применить поведение: wonder.";
+
+            NILayer wonderInputLayer = new NILayer();
+
+            ArrayList<NINeuron> input = new ArrayList<NINeuron>();
+
+            NINeuron health = new NINeuron(2);
+            health.setDescription("Нейрон отражающий состояние здоровья.");
+
+            NINeuron knifle = new NINeuron(0);
+            knifle.setDescription("Нейрон отражающий наличие ножа.");
+
+            NINeuron gun = new NINeuron(0);
+            gun.setDescription("Нейрон отражающий наличие стрелкового оружия.");
+
+            NINeuron enemy = new NINeuron(3);
+            enemy.setDescription("Нейрон отражающий количество противников.");
+
+            wonderInputLayer.getNeurons().add(health);
+            wonderInputLayer.getNeurons().add(knifle);
+            wonderInputLayer.getNeurons().add(gun);
+            wonderInputLayer.getNeurons().add(enemy);
+
+            //"Attack", "Run", "Wander", "Hide"
+
+            NILayer wonderOuputLayer = new NILayer();
+            wonderOuputLayer.setLayerType(2);
+
+            NINeuron atack = new NINeuron(0);
+            atack.setDescription("Действие : атака");
+
+            NINeuron run = new NINeuron(0);
+            run.setDescription("Действие : побег");
+
+            NINeuron wander = new NINeuron(0);
+            wander.setDescription("Действие : наблюдение");
+
+            NINeuron hide = new NINeuron(0);
+            hide.setDescription("Действие : спрятаться");
+
+            wonderOuputLayer.getNeurons().add(atack);
+            wonderOuputLayer.getNeurons().add(run);
+            wonderOuputLayer.getNeurons().add(wander);
+            wonderOuputLayer.getNeurons().add(hide);
+
+            wonderSample.getLayer().add(wonderInputLayer);
+            wonderSample.getLayer().add(wonderOuputLayer);
+
+            completed = all.get(0).getResult(wonderSample);
         }
 
-        System.out.println(completed.outputLayer.getMax().getDescription());
-
+        if(completed != null && completed.getLayer() != null && completed.getLayer().size() > 0)
+            System.out.println(completed.getLayer().get(completed.getLayer().size()-1).getMax().getDescription());
     }
 
     public static void createTestContent(NIService niService) throws SQLException, ClassNotFoundException {
@@ -146,9 +145,6 @@ public class NITest {
         wonderOuputLayer.getNeurons().add(wander);
         wonderOuputLayer.getNeurons().add(hide);
 
-        wonderSample.setInputLayer(wonderInputLayer);
-        wonderSample.setOutputLayer(wonderOuputLayer);
-
         wonderSample.getLayer().add(wonderInputLayer);
         wonderSample.getLayer().add(wonderOuputLayer);
 
@@ -198,9 +194,6 @@ public class NITest {
         wonder2OuputLayer.getNeurons().add(run);
         wonder2OuputLayer.getNeurons().add(wander);
         wonder2OuputLayer.getNeurons().add(hide);
-
-        wonder2Sample.setInputLayer(wonder2InputLayer);
-        wonder2Sample.setOutputLayer(wonder2OuputLayer);
 
         wonder2Sample.getLayer().add(wonder2InputLayer);
         wonder2Sample.getLayer().add(wonder2OuputLayer);
@@ -252,9 +245,6 @@ public class NITest {
         atackOuputLayer.getNeurons().add(wander);
         atackOuputLayer.getNeurons().add(hide);
 
-        atackSample.setInputLayer(atackInputLayer);
-        atackSample.setOutputLayer(atackOuputLayer);
-
         atackSample.getLayer().add(atackInputLayer);
         atackSample.getLayer().add(atackOuputLayer);
 
@@ -305,9 +295,6 @@ public class NITest {
         atack2OuputLayer.getNeurons().add(run);
         atack2OuputLayer.getNeurons().add(wander);
         atack2OuputLayer.getNeurons().add(hide);
-
-        atack2Sample.setInputLayer(atack2InputLayer);
-        atack2Sample.setOutputLayer(atack2OuputLayer);
 
         atack2Sample.getLayer().add(atack2InputLayer);
         atack2Sample.getLayer().add(atack2OuputLayer);
