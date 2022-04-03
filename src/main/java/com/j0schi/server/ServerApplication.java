@@ -11,5 +11,4 @@ public class ServerApplication {
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		SpringApplication.run(ServerApplication.class, args);
 	}
-
 }

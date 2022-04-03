@@ -1,13 +1,14 @@
 package com.j0schi.server.NI.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder(toBuilder=true)
 public class NILayer {
 
@@ -24,8 +25,6 @@ public class NILayer {
     private List<NINeuron> neurons = new ArrayList<>();
 
     //-------------------------------- Constructors:
-
-    public NILayer(){}
 
     public NILayer(String tableName, ArrayList<NINeuron> neurons){
         this.tableName = tableName;

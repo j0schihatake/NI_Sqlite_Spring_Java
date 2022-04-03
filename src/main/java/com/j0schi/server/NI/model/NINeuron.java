@@ -1,11 +1,11 @@
 package com.j0schi.server.NI.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 @Data
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder=true)
 public class NINeuron {
 
@@ -22,9 +22,6 @@ public class NINeuron {
     private float value;
 
     // --------------------------------------- Constructors:
-
-    public NINeuron(){}
-
     public NINeuron(float o){
         setValue(o);
     }

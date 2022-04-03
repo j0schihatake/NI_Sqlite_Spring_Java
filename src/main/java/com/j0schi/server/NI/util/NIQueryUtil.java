@@ -11,6 +11,23 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class NIQueryUtil {
 
+    //----------------------------------- CREATE TABLE DEFAULT:
+    public String createNINetworkTable(NINetwork niNetwork){
+        return "CREATE TABLE IF NOT EXISTS main.network (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \"name\" TEXT, \"description\" TEXT, \"table_name\" TEXT, \"input_neurons\" INTEGER, \"hidden_neurons\" INTEGER, \"output_neurons\" INTEGER, \"dest\" INTEGER, \"hidden_layer_count\" INTEGER, \"learn_rate\" TEXT)";
+    }
+
+    public String createNISampleTable(NISample niSample){
+        return "CREATE TABLE IF NOT EXISTS main.sample (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT, \"network_name\" TEXT, \"sample_name\" TEXT, \"table_name\" TEXT, \"description\" TEXT)";
+    }
+
+    public String createNILayerTable(NILayer niLayer){
+        return "CREATE TABLE IF NOT EXISTS main.layer (\"id\" INTEGER, \"network_name\" TEXT, \"sample_name\" TEXT, \"layer_type\" INTEGER, \"table_name\" TEXT, \"layer_id\" TEXT)";
+    }
+
+    public String createNINeuronTable(NINeuron niNeuron){
+        return "CREATE TABLE IF NOT EXISTS main.neuron (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT, \"layer_id\" INTEGER, \"network_name\" TEXT, \"sample_name\" TEXT, \"layer_type\" INTEGER, \"value\" TEXT)";
+    }
+
     //----------------------------------- UPDATE:
     public String updateNINetworkQuery(NINetwork niNetwork){
         StringBuilder query = new StringBuilder();
@@ -145,7 +162,7 @@ public class NIQueryUtil {
 
     //----------------------------------- SELECT:
     public String selectAllNINetworksQuery(){
-        return new StringBuilder().append("select * from main.network;").toString();
+        return "select * from network";
     }
 
     public String selectAllNISampleQuery(){
@@ -161,7 +178,7 @@ public class NIQueryUtil {
     }
 
     public String selectNINetworkByNetworkNameQuery(String networkName){
-        return new StringBuilder().append("select * from main.network where network_name = '").append(networkName).append("';").toString();
+        return new StringBuilder().append("select * from main.network where name = '").append(networkName).append("';").toString();
     }
 
     public String selectAllNISampleByNetworkNameQuery(String networkName){

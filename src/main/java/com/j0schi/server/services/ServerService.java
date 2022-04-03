@@ -19,7 +19,6 @@ public class ServerService {
     //------------------------------ Other
     private final NITest niTest;
 
-
     //------------------------------ Main thread
     @EventListener(ApplicationReadyEvent.class)
     public void doSomethingAfterStartup() throws SQLException, ClassNotFoundException {

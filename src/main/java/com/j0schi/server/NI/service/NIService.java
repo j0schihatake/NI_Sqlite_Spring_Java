@@ -19,6 +19,13 @@ public class NIService {
     private final NIRepository niRepository;
     private final NIQueryUtil niQueryUtil;
 
+    public void initSchema(){
+        niRepository.execute(niQueryUtil.createNINetworkTable(new NINetwork()));
+        niRepository.execute(niQueryUtil.createNISampleTable(new NISample()));
+        niRepository.execute(niQueryUtil.createNILayerTable(new NILayer()));
+        niRepository.execute(niQueryUtil.createNINeuronTable(new NINeuron()));
+    }
+
     //------------------------------ NINeuron
     public List<NINeuron> getAllNINeuronByNetworkNameAndSampleNameAndLayerId(String networkName, String sampleName, int layerId){
         return niRepository.getNINeurons(niQueryUtil.selectAllNINeuronByNetworkNameAndLayerIdQuery(networkName, sampleName, layerId));
@@ -82,7 +89,6 @@ public class NIService {
     }
 
     //------------------------------------------------ INSERT:
-    @Transactional
     public boolean insertOrUpdateNINetwork(NINetwork niNetwork){
 
         boolean result = false;
@@ -92,7 +98,7 @@ public class NIService {
 
             NINetwork prevNetworkState = niRepository.getNINetwork(niQueryUtil.selectNINetworkByNetworkNameQuery(niNetwork.getName()));
 
-            if (prevNetworkState == null)
+            if (prevNetworkState != null)
                 action = "update";
 
             switch (action) {

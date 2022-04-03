@@ -16,18 +16,18 @@ import java.util.List;
 @Builder(toBuilder=true)
 public class NINetwork {
 
-    private String name;
+    private String name = "default_book_example";
 
     private String description = "Сеть без имени.";
 
-    private String tableName = "no_name_ninetwork";
+    private String tableName = "no_name_ni_network";
 
     private List<NISample> samples = new ArrayList<NISample>();
 
     // Конвертирую пример из книги:
-    private int INPUT_NEURONS;
-    private int HIDDEN_NEURONS;
-    private int OUTPUT_NEURONS;
+    private int INPUT_NEURONS = 4;
+    private int HIDDEN_NEURONS = 3;
+    private int OUTPUT_NEURONS = 4;
 
     // Смещение
     private int dest = 1;

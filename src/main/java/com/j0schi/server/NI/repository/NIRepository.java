@@ -23,6 +23,7 @@ public class NIRepository {
     public Boolean execute(String query){
         Boolean success = false;
         try{
+            jdbcTemplate.execute(query);
             System.out.println("Query ok " + query);
             success = true;
         }catch(Exception ex){
