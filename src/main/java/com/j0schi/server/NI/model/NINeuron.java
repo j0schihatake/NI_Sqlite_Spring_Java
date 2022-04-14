@@ -49,4 +49,8 @@ public class NINeuron {
     public void setValue(boolean o){
             this.value = !o ? 0 : 1;
     }
+
+    // ---------------------------------------- Random
+    public int minRandom  = 0;
+    public int maxRandom = 10;
 }

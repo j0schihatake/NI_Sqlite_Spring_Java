@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Data
 @ToString
@@ -31,6 +32,17 @@ public class NILayer {
         this.neurons = neurons;
     }
 
+    public NILayer clone(){
+        NILayer clone = new NILayer();
+        clone.setLayerType(this.getLayerType());
+        clone.setLayerId(this.getLayerId());
+        clone.setNetworkName(this.getNetworkName());
+        clone.setTableName(this.getTableName());
+        clone.setSampleName(this.getSampleName());
+        clone.setNeurons(this.getNeurons());
+        return clone;
+    }
+
     //--------------------------------------- Utils:
 
     public NINeuron getMax(){
@@ -38,6 +50,14 @@ public class NILayer {
         for(NINeuron neuron : this.getNeurons()){
             if(result == null || result.getValue() < neuron.getValue())
                 result = neuron;
+        }
+        return result;
+    }
+
+    public NILayer getRandomValue(){
+        NILayer result = clone();
+        for (NINeuron neuron: result.getNeurons()) {
+            //neuron.setValue();
         }
         return result;
     }
