@@ -32,30 +32,36 @@ public class NILayer {
         this.neurons = neurons;
     }
 
-    public NILayer clone(){
-        NILayer clone = new NILayer();
-        clone.setLayerType(this.getLayerType());
-        clone.setLayerId(this.getLayerId());
-        clone.setNetworkName(this.getNetworkName());
-        clone.setTableName(this.getTableName());
-        clone.setSampleName(this.getSampleName());
-        clone.setNeurons(this.getNeurons());
-        return clone;
+    public NILayer dublicate(){
+        NILayer dublicateLayer = new NILayer();
+        dublicateLayer.setLayerType(this.getLayerType());
+        dublicateLayer.setLayerId(this.getLayerId());
+        dublicateLayer.setNetworkName(this.getNetworkName());
+        dublicateLayer.setTableName(this.getTableName());
+        dublicateLayer.setSampleName(this.getSampleName());
+        for(int i = 0; i < neurons.size(); i++){
+            dublicateLayer.neurons.add(neurons.get(i).dublicate());
+        }
+        return dublicateLayer;
     }
 
     //--------------------------------------- Utils:
 
-    public NINeuron getMax(){
-        NINeuron result = null;
-        for(NINeuron neuron : this.getNeurons()){
-            if(result == null || result.getValue() < neuron.getValue())
-                result = neuron;
+    public int getMax(){
+        NINeuron resultNeuron = null;
+        int result = 0;
+        for(int i = 0; i < this.getNeurons().size(); i++ ){
+            NINeuron neuron  = this.getNeurons().get(i);
+            if(resultNeuron == null || resultNeuron.getValue() < neuron.getValue()) {
+                resultNeuron = neuron;
+                result = i;
+            }
         }
         return result;
     }
 
     public NILayer getRandomValue(){
-        NILayer result = clone();
+        NILayer result = dublicate();
         for (NINeuron neuron: result.getNeurons()) {
             //neuron.setValue();
         }

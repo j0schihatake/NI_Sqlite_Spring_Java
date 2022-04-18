@@ -1,4 +1,4 @@
-package com.j0schi.server.NI.util;
+package com.j0schi.server.NI.db.util;
 
 import java.sql.Types;
 

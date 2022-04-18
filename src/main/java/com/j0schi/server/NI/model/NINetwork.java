@@ -42,7 +42,7 @@ public class NINetwork {
 
     private float RAND_MAX = 0.5f;
 
-    // Входной данные от пользователя:
+    // Входные данные от пользователя:
     private NISample inputSample = null;
 
     // Веса:
@@ -249,6 +249,10 @@ public class NINetwork {
         return (val * (1.0f - val));
     }
 
+    public void addSample(NISample sample){
+        getSamples().add(sample);
+    }
+
     //------------------------ Получение результатов(на вход подается пример с пустым выходным слоем):
 
     // Функция победитель получает все(по идее моя выборка также длжна работать):
@@ -285,5 +289,9 @@ public class NINetwork {
             sample.getLayer().get(sample.getLayer().size()-1).getNeurons().get(i).setValue(actual[i]);
         }
         return sample;
+    }
+
+    public NISample first(){
+        return samples != null && samples.size() > 0 ? samples.get(0) : null;
     }
 }

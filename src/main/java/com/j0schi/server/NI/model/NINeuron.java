@@ -53,4 +53,17 @@ public class NINeuron {
     // ---------------------------------------- Random
     public int minRandom  = 0;
     public int maxRandom = 10;
+
+    // ---------------------------------------- Constructors
+    public NINeuron dublicate(){
+        NINeuron dublicate = new NINeuron();
+        dublicate.description = description;
+        dublicate.layerId = layerId;
+        dublicate.layerType = layerType;
+        dublicate.sampleName = sampleName;
+        dublicate.setValue(value);
+        dublicate.minRandom = minRandom;
+        dublicate.maxRandom = maxRandom;
+        return dublicate;
+    }
 }

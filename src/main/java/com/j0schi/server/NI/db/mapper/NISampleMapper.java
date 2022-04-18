@@ -1,4 +1,4 @@
-package com.j0schi.server.NI.mapper;
+package com.j0schi.server.NI.db.mapper;
 
 import com.j0schi.server.NI.model.NISample;
 import org.springframework.jdbc.core.RowMapper;

@@ -1,4 +1,4 @@
-package com.j0schi.server.NI.util;
+package com.j0schi.server.NI.db.util;
 import com.j0schi.server.NI.model.NILayer;
 import com.j0schi.server.NI.model.NINetwork;
 import com.j0schi.server.NI.model.NINeuron;

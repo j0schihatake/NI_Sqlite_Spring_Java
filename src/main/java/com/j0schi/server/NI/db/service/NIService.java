@@ -1,15 +1,14 @@
-package com.j0schi.server.NI.service;
+package com.j0schi.server.NI.db.service;
 
 import com.j0schi.server.NI.model.NILayer;
 import com.j0schi.server.NI.model.NINetwork;
 import com.j0schi.server.NI.model.NINeuron;
 import com.j0schi.server.NI.model.NISample;
-import com.j0schi.server.NI.repository.NIRepository;
-import com.j0schi.server.NI.util.NIQueryUtil;
+import com.j0schi.server.NI.db.repository.NIRepository;
+import com.j0schi.server.NI.db.util.NIQueryUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service

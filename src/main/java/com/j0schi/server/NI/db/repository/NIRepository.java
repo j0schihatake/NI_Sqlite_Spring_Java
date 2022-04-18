@@ -1,11 +1,11 @@
-package com.j0schi.server.NI.repository;
+package com.j0schi.server.NI.db.repository;
 
-import com.j0schi.server.NI.mapper.NILayerMapper;
-import com.j0schi.server.NI.mapper.NINeuronMapper;
-import com.j0schi.server.NI.mapper.NISampleMapper;
+import com.j0schi.server.NI.db.mapper.NILayerMapper;
+import com.j0schi.server.NI.db.mapper.NINetworkMapper;
+import com.j0schi.server.NI.db.mapper.NINeuronMapper;
+import com.j0schi.server.NI.db.mapper.NISampleMapper;
 import com.j0schi.server.NI.model.NILayer;
 import com.j0schi.server.NI.model.NINetwork;
-import com.j0schi.server.NI.mapper.NINetworkMapper;
 import com.j0schi.server.NI.model.NINeuron;
 import com.j0schi.server.NI.model.NISample;
 import lombok.RequiredArgsConstructor;
