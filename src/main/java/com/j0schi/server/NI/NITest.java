@@ -21,9 +21,6 @@ import java.util.ArrayList;
 public class NITest {
 
     public void test(NIService niService) throws SQLException, ClassNotFoundException, InterruptedException {
-
-        //niService.initSchema();
-
         testNetwork(createTestContent(niService));
     }
 
@@ -356,7 +353,7 @@ public class NITest {
         bookNetwork.initialize(bookNetwork.getSamples().get(0));
         bookNetwork.learn(10000);
 
-        //niService.insertOrUpdateNINetwork(bookNetwork);
+        // niService.insertOrUpdateNINetwork(bookNetwork);
 
         // SqLiteUtil.insertNINetwork(bookNetwork);
 
