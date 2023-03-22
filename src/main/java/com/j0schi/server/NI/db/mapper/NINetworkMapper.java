@@ -1,4 +1,4 @@
-package com.j0schi.server.NI.mapper;
+package com.j0schi.server.NI.db.mapper;
 
 import com.j0schi.server.NI.model.NINetwork;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,7 +11,6 @@ public class NINetworkMapper implements RowMapper<NINetwork> {
     @Override
     public NINetwork mapRow(ResultSet resultSet, int i) throws SQLException {
         NINetwork result = new NINetwork();
-        result.setPk(resultSet.getInt("id"));
         result.setName(resultSet.getString("name"));
         result.setDescription(resultSet.getString("description"));
         result.setTableName(resultSet.getString("table_name"));

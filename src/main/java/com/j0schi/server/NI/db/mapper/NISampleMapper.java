@@ -1,4 +1,4 @@
-package com.j0schi.server.NI.mapper;
+package com.j0schi.server.NI.db.mapper;
 
 import com.j0schi.server.NI.model.NISample;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,7 +11,6 @@ public class NISampleMapper implements RowMapper<NISample> {
     @Override
     public NISample mapRow(ResultSet resultSet, int i) throws SQLException {
         NISample result = new NISample();
-        result.setPk(resultSet.getInt("id"));
         result.setNetworkName(resultSet.getString("network_name"));
         result.setSampleName(resultSet.getString("sample_name"));
         result.setTableName(resultSet.getString("table_name"));

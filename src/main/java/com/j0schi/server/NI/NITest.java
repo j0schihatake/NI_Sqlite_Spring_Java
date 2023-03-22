@@ -4,14 +4,14 @@ import com.j0schi.server.NI.model.NILayer;
 import com.j0schi.server.NI.model.NINetwork;
 import com.j0schi.server.NI.model.NINeuron;
 import com.j0schi.server.NI.model.NISample;
-import com.j0schi.server.NI.service.NIService;
-import com.j0schi.server.NI.util.SqLiteUtil;
+import com.j0schi.server.NI.db.service.NIService;
+import com.j0schi.server.NI.db.util.SqLiteUtil;
+import com.j0schi.server.NI.util.Utils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * com.j0schi.server.NI пример из книги:
@@ -20,104 +20,66 @@ import java.util.List;
 @Component
 public class NITest {
 
-    public void test(NIService niService) throws SQLException, ClassNotFoundException {
+    public void test(NIService niService) throws SQLException, ClassNotFoundException, InterruptedException {
+        testNetwork(createTestContent(niService));
+    }
 
-        createTestContent(niService);
+    public static void testNetwork(NINetwork niNetwork) throws InterruptedException {
 
-        // ArrayList<NINetwork> all = readNINetwork();
-        List<NINetwork> all = niService.getAllNINetwork();
+        for(int i = 0; i < 30; i++){
+            System.out.println("NINetwork." + niNetwork.getDescription() + " next();");
+            System.out.println("");
+            NISample nextRand = niNetwork.first();
+            System.out.println("Ситуация следующая:");
+            for(NINeuron neuron : nextRand.input().getNeurons()){
+                neuron.setValue(Utils.getRandomNumber(neuron.minRandom, neuron.maxRandom));
+                System.out.println(neuron.getDescription() + ":   " + neuron.getValue());
+            }
+            NISample resultSample = niNetwork.getResult(nextRand);
+            int maxIndex = resultSample.output().getMax();
+            NINeuron max = resultSample.output().getNeurons().get(maxIndex);
+            System.out.println("Немного подумав принимаем решение: " + max.getDescription());
+            Thread.sleep(5000);
 
-        for(NINetwork network : all){
-            network.initialize(network.getSamples().get(0));
-            network.learn(10000);
         }
-
-        // Пример использования:
-        NISample wonderSample = new NISample();
-        wonderSample.tableName = "wonder";
-        wonderSample.description = "Пример когда следует применить поведение: wonder.";
-
-        NILayer wonderInputLayer = new NILayer();
-
-        ArrayList<NINeuron> input = new ArrayList<NINeuron>();
-
-        NINeuron health = new NINeuron(2);
-        health.setDescription("Нейрон отражающий состояние здоровья.");
-
-        NINeuron knifle = new NINeuron(0);
-        knifle.setDescription("Нейрон отражающий наличие ножа.");
-
-        NINeuron gun = new NINeuron(0);
-        gun.setDescription("Нейрон отражающий наличие стрелкового оружия.");
-
-        NINeuron enemy = new NINeuron(3);
-        enemy.setDescription("Нейрон отражающий количество противников.");
-
-        wonderInputLayer.getNeurons().add(health);
-        wonderInputLayer.getNeurons().add(knifle);
-        wonderInputLayer.getNeurons().add(gun);
-        wonderInputLayer.getNeurons().add(enemy);
-
-        //"Attack", "Run", "Wander", "Hide"
-
-        NILayer wonderOuputLayer = new NILayer();
-        wonderOuputLayer.setLayerType(2);
-
-        NINeuron atack = new NINeuron(0);
-        atack.setDescription("Действие : атака");
-
-        NINeuron run = new NINeuron(0);
-        run.setDescription("Действие : побег");
-
-        NINeuron wander = new NINeuron(0);
-        wander.setDescription("Действие : наблюдение");
-
-        NINeuron hide = new NINeuron(0);
-        hide.setDescription("Действие : спрятаться");
-
-        wonderOuputLayer.getNeurons().add(atack);
-        wonderOuputLayer.getNeurons().add(run);
-        wonderOuputLayer.getNeurons().add(wander);
-        wonderOuputLayer.getNeurons().add(hide);
-
-        wonderSample.inputLayer = wonderInputLayer;
-        wonderSample.outputLayer = wonderOuputLayer;
-
-        NISample completed = null;
-
-        if(all!=null && !all.isEmpty()) {
-            completed = all.get(0).calculateResult(wonderSample);
-        }
-
-        System.out.println(completed.outputLayer.getMax().getDescription());
 
     }
 
-    public static void createTestContent(NIService niService) throws SQLException, ClassNotFoundException {
+    public static NINetwork createTestContent(NIService niService) throws SQLException, ClassNotFoundException {
 
         NINetwork bookNetwork = new NINetwork();
         bookNetwork.setTableName("exampleBookNetwork".toLowerCase());
         bookNetwork.setDescription("Нейронная сеть по примеру из замечательной книги");
 
-        //----------------------------------------- Wonder:
+        NISample nextSample = null;
 
-        NISample wonderSample = new NISample();
-        wonderSample.tableName = "wonder";
-        wonderSample.description = "Пример когда следует применить поведение: wonder.";
+        //----------------------------------------- Формируем первый пример:
+
+        NISample firstSample = new NISample();
+        firstSample.tableName = "wonder";
+        firstSample.description = "Пример когда следует применить поведение: wonder.";
 
         NILayer wonderInputLayer = new NILayer();
 
         NINeuron health = new NINeuron(2);
         health.setDescription("Нейрон отражающий состояние здоровья.");
+        health.minRandom = 0;
+        health.maxRandom = 3;
 
         NINeuron knifle = new NINeuron(0);
         knifle.setDescription("Нейрон отражающий наличие ножа.");
+        knifle.minRandom = 0;
+        knifle.maxRandom = 2;
 
         NINeuron gun = new NINeuron(0);
         gun.setDescription("Нейрон отражающий наличие стрелкового оружия.");
+        gun.minRandom = 0;
+        gun.maxRandom = 2;
 
         NINeuron enemy = new NINeuron(0);
         enemy.setDescription("Нейрон отражающий количество противников.");
+        enemy.minRandom = 0;
+        enemy.maxRandom = 4;
 
         wonderInputLayer.getNeurons().add(health);
         wonderInputLayer.getNeurons().add(knifle);
@@ -126,8 +88,8 @@ public class NITest {
 
         //"Attack", "Run", "Wander", "Hide"
 
-        NILayer wonderOuputLayer = new NILayer();
-        wonderOuputLayer.setLayerType(2);
+        NILayer firstOutputLayer = new NILayer();
+        firstOutputLayer.setLayerType(2);
 
         NINeuron atack = new NINeuron(0);
         atack.setDescription("Действие : атака");
@@ -141,185 +103,261 @@ public class NITest {
         NINeuron hide = new NINeuron(0);
         hide.setDescription("Действие : спрятаться");
 
-        wonderOuputLayer.getNeurons().add(atack);
-        wonderOuputLayer.getNeurons().add(run);
-        wonderOuputLayer.getNeurons().add(wander);
-        wonderOuputLayer.getNeurons().add(hide);
+        firstOutputLayer.getNeurons().add(atack);
+        firstOutputLayer.getNeurons().add(run);
+        firstOutputLayer.getNeurons().add(wander);
+        firstOutputLayer.getNeurons().add(hide);
 
-        wonderSample.setInputLayer(wonderInputLayer);
-        wonderSample.setOutputLayer(wonderOuputLayer);
+        firstSample.getLayer().add(wonderInputLayer);
+        firstSample.getLayer().add(firstOutputLayer);
 
-        wonderSample.getLayer().add(wonderInputLayer);
-        wonderSample.getLayer().add(wonderOuputLayer);
+        bookNetwork.addSample(firstSample);
 
-        //----------------------------------------- Wonder 2:
+        // -------------------Далее через дублирование другие примеры при необходимости:
 
-        NISample wonder2Sample = new NISample();
-        wonder2Sample.setTableName("wonder2");
-        wonder2Sample.setDescription("Пример когда следует применить поведение: wonder2.");
+        // Пример 2:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(2);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        NILayer wonder2InputLayer = new NILayer();
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(1);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        health = new NINeuron(2);
-        health.setDescription("Нейрон отражающий состояние здоровья.");
+        // Пример 3:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(2);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(1);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        knifle = new NINeuron(0);
-        knifle.setDescription("Нейрон отражающий наличие ножа.");
+        nextSample.output().getNeurons().get(0).setValue(1);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        gun = new NINeuron(0);
-        gun.setDescription("Нейрон отражающий наличие стрелкового оружия.");
+        // Пример 4:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(2);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(1);
+        nextSample.input().getNeurons().get(3).setValue(2);
 
-        enemy = new NINeuron(1);
-        enemy.setDescription("Нейрон отражающий количество противников.");
+        nextSample.output().getNeurons().get(0).setValue(1);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        wonder2InputLayer.getNeurons().add(health);
-        wonder2InputLayer.getNeurons().add(knifle);
-        wonder2InputLayer.getNeurons().add(gun);
-        wonder2InputLayer.getNeurons().add(enemy);
+        // Пример 5:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(2);
+        nextSample.input().getNeurons().get(1).setValue(1);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(2);
 
-        //"Attack", "Run", "Wander", "Hide"
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(1);
+        bookNetwork.addSample(nextSample);
 
-        NILayer wonder2OuputLayer = new NILayer();
-        wonder2OuputLayer.setLayerType(2);
+        // Пример 6:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(2);
+        nextSample.input().getNeurons().get(1).setValue(1);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        atack = new NINeuron(0);
-        atack.setDescription("Действие : атака");
+        nextSample.output().getNeurons().get(0).setValue(1);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        run = new NINeuron(0);
-        run.setDescription("Действие : побег");
+        // Пример 7:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(2);
+        nextSample.input().getNeurons().get(1).setValue(1);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        wander = new NINeuron(1);
-        wander.setDescription("Действие : наблюдение");
+        nextSample.output().getNeurons().get(0).setValue(1);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        hide = new NINeuron(0);
-        hide.setDescription("Действие : спрятаться");
+        // Пример 8:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(1);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(0);
 
-        wonder2OuputLayer.getNeurons().add(atack);
-        wonder2OuputLayer.getNeurons().add(run);
-        wonder2OuputLayer.getNeurons().add(wander);
-        wonder2OuputLayer.getNeurons().add(hide);
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(1);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        wonder2Sample.setInputLayer(wonder2InputLayer);
-        wonder2Sample.setOutputLayer(wonder2OuputLayer);
+        // Пример 9:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(1);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        wonder2Sample.getLayer().add(wonder2InputLayer);
-        wonder2Sample.getLayer().add(wonder2OuputLayer);
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(1);
+        bookNetwork.addSample(nextSample);
 
-        //----------------------------------------- Atack:
+        // Пример 10:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(1);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(1);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        NISample atackSample = new NISample();
-        atackSample.setTableName("atack");
-        atackSample.setDescription("Пример когда следует применить поведение: атака.");
+        nextSample.output().getNeurons().get(0).setValue(1);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        NILayer atackInputLayer = new NILayer();
+        // Пример 11:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(1);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(1);
+        nextSample.input().getNeurons().get(3).setValue(2);
 
-        health = new NINeuron(2);
-        health.setDescription("Нейрон отражающий состояние здоровья.");
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(1);
+        bookNetwork.addSample(nextSample);
 
-        knifle = new NINeuron(0);
-        knifle.setDescription("Нейрон отражающий наличие ножа.");
+        // Пример 12:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(1);
+        nextSample.input().getNeurons().get(1).setValue(1);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(2);
 
-        gun = new NINeuron(1);
-        gun.setDescription("Нейрон отражающий наличие стрелкового оружия.");
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(1);
+        bookNetwork.addSample(nextSample);
 
-        enemy = new NINeuron(1);
-        enemy.setDescription("Нейрон отражающий количество противников.");
+        // Пример 13:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(1);
+        nextSample.input().getNeurons().get(1).setValue(1);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        atackInputLayer.getNeurons().add(health);
-        atackInputLayer.getNeurons().add(knifle);
-        atackInputLayer.getNeurons().add(gun);
-        atackInputLayer.getNeurons().add(enemy);
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(1);
+        bookNetwork.addSample(nextSample);
 
-        //"Attack", "Run", "Wander", "Hide"
+        // Пример 14:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(0);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(0);
 
-        NILayer atackOuputLayer = new NILayer();
-        atackOuputLayer.setLayerType(2);
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(1);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        atack = new NINeuron(1);
-        atack.setDescription("Действие : атака");
+        // Пример 15:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(0);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        run = new NINeuron(0);
-        run.setDescription("Действие : побег");
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(1);
+        bookNetwork.addSample(nextSample);
 
-        wander = new NINeuron(0);
-        wander.setDescription("Действие : наблюдение");
+        // Пример 16:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(0);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(1);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        hide = new NINeuron(0);
-        hide.setDescription("Действие : спрятаться");
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(1);
+        bookNetwork.addSample(nextSample);
 
-        atackOuputLayer.getNeurons().add(atack);
-        atackOuputLayer.getNeurons().add(run);
-        atackOuputLayer.getNeurons().add(wander);
-        atackOuputLayer.getNeurons().add(hide);
+        // Пример 17:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(0);
+        nextSample.input().getNeurons().get(1).setValue(0);
+        nextSample.input().getNeurons().get(2).setValue(1);
+        nextSample.input().getNeurons().get(3).setValue(2);
 
-        atackSample.setInputLayer(atackInputLayer);
-        atackSample.setOutputLayer(atackOuputLayer);
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(1);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        atackSample.getLayer().add(atackInputLayer);
-        atackSample.getLayer().add(atackOuputLayer);
+        // Пример 18:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(0);
+        nextSample.input().getNeurons().get(1).setValue(1);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(2);
 
-        //----------------------------------------- Atack 2:
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(1);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(0);
+        bookNetwork.addSample(nextSample);
 
-        NISample atack2Sample = new NISample();
-        atack2Sample.setTableName("atack2");
-        atack2Sample.setDescription("Пример когда следует применить поведение: атака2.");
+        // Пример 19:
+        nextSample = firstSample.dublicate();
+        nextSample.input().getNeurons().get(0).setValue(0);
+        nextSample.input().getNeurons().get(1).setValue(1);
+        nextSample.input().getNeurons().get(2).setValue(0);
+        nextSample.input().getNeurons().get(3).setValue(1);
 
-        NILayer atack2InputLayer = new NILayer();
+        nextSample.output().getNeurons().get(0).setValue(0);
+        nextSample.output().getNeurons().get(1).setValue(0);
+        nextSample.output().getNeurons().get(2).setValue(0);
+        nextSample.output().getNeurons().get(3).setValue(1);
+        bookNetwork.addSample(nextSample);
 
-        health = new NINeuron(2);
-        health.setDescription("Нейрон отражающий состояние здоровья.");
+        // Теперь выполняем весь цикл обучения:
+        bookNetwork.initialize(bookNetwork.getSamples().get(0));
+        bookNetwork.learn(10000);
 
-        knifle = new NINeuron(0);
-        knifle.setDescription("Нейрон отражающий наличие ножа.");
+        // niService.insertOrUpdateNINetwork(bookNetwork);
 
-        gun = new NINeuron(1);
-        gun.setDescription("Нейрон отражающий наличие стрелкового оружия.");
+        // SqLiteUtil.insertNINetwork(bookNetwork);
 
-        enemy = new NINeuron(2);
-        enemy.setDescription("Нейрон отражающий количество противников.");
-
-        atack2InputLayer.getNeurons().add(health);
-        atack2InputLayer.getNeurons().add(knifle);
-        atack2InputLayer.getNeurons().add(gun);
-        atack2InputLayer.getNeurons().add(enemy);
-
-        // "Attack", "Run", "Wander", "Hide"
-
-        NILayer atack2OuputLayer = new NILayer();
-
-        atack2OuputLayer.setLayerType(2);
-
-        atack = new NINeuron(1);
-        atack.setDescription("Действие : атака");
-
-        run = new NINeuron(0);
-        run.setDescription("Действие : побег");
-
-        wander = new NINeuron(0);
-        wander.setDescription("Действие : наблюдение");
-
-        hide = new NINeuron(0);
-        hide.setDescription("Действие : спрятаться");
-
-        atack2OuputLayer.getNeurons().add(atack);
-        atack2OuputLayer.getNeurons().add(run);
-        atack2OuputLayer.getNeurons().add(wander);
-        atack2OuputLayer.getNeurons().add(hide);
-
-        atack2Sample.setInputLayer(atack2InputLayer);
-        atack2Sample.setOutputLayer(atack2OuputLayer);
-
-        atack2Sample.getLayer().add(atack2InputLayer);
-        atack2Sample.getLayer().add(atack2OuputLayer);
-
-        bookNetwork.getSamples().add(wonderSample);
-        bookNetwork.getSamples().add(wonder2Sample);
-        bookNetwork.getSamples().add(atackSample);
-        bookNetwork.getSamples().add(atack2Sample);
-
-        niService.insertOrUpdateNINetwork(bookNetwork);
-
-        //SqLiteUtil.insertNINetwork(bookNetwork);
+        return bookNetwork;
     }
 
     public static ArrayList<NINetwork> readNINetwork() throws SQLException, ClassNotFoundException {

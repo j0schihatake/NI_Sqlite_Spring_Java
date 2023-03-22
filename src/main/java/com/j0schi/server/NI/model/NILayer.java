@@ -1,22 +1,19 @@
 package com.j0schi.server.NI.model;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Data
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder=true)
 public class NILayer {
 
-    private int pk;
-
     private int layerId;                                                // порядковый номер слоя слева направо: 0.1.2...
-
-    public static final String INPUT_LAYER_PREFIX = "_input_layer";
-
-    public static final String OUTPUT_LAYER_PREFIX = "_output_layer";
 
     private String networkName;
 
@@ -30,20 +27,43 @@ public class NILayer {
 
     //-------------------------------- Constructors:
 
-    public NILayer(){}
-
     public NILayer(String tableName, ArrayList<NINeuron> neurons){
         this.tableName = tableName;
         this.neurons = neurons;
     }
 
+    public NILayer dublicate(){
+        NILayer dublicateLayer = new NILayer();
+        dublicateLayer.setLayerType(this.getLayerType());
+        dublicateLayer.setLayerId(this.getLayerId());
+        dublicateLayer.setNetworkName(this.getNetworkName());
+        dublicateLayer.setTableName(this.getTableName());
+        dublicateLayer.setSampleName(this.getSampleName());
+        for(int i = 0; i < neurons.size(); i++){
+            dublicateLayer.neurons.add(neurons.get(i).dublicate());
+        }
+        return dublicateLayer;
+    }
+
     //--------------------------------------- Utils:
 
-    public NINeuron getMax(){
-        NINeuron result = null;
-        for(NINeuron neuron : this.getNeurons()){
-            if(result == null || result.getValue() < neuron.getValue())
-                result = neuron;
+    public int getMax(){
+        NINeuron resultNeuron = null;
+        int result = 0;
+        for(int i = 0; i < this.getNeurons().size(); i++ ){
+            NINeuron neuron  = this.getNeurons().get(i);
+            if(resultNeuron == null || resultNeuron.getValue() < neuron.getValue()) {
+                resultNeuron = neuron;
+                result = i;
+            }
+        }
+        return result;
+    }
+
+    public NILayer getRandomValue(){
+        NILayer result = dublicate();
+        for (NINeuron neuron: result.getNeurons()) {
+            //neuron.setValue();
         }
         return result;
     }
