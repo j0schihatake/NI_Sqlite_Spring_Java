@@ -7,10 +7,3 @@
 https://youtu.be/P15K7imhTl0
 
 https://user-images.githubusercontent.com/17340263/180105853-ab354ad2-c5e4-424a-9742-cd6cdd1167c0.mp4
-
-2.1	Похоть
-2.2	Чревоугодие
-2.3	Жадность
-2.4	Лень
-2.5	Гнев
-2.6	Зависть
